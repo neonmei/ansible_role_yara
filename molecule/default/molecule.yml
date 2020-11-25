@@ -1,0 +1,56 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint: |
+  yamllint .
+  ansible-lint .
+platforms:
+
+  - name: molecule_yara_centos8
+    image: geerlingguy/docker-centos8-ansible
+    command: ""
+    pre_build_image: true
+    privileged: true
+    memory_reservation: 512m
+    memory: 1024m
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+
+  - name: molecule_yara_centos7
+    image: geerlingguy/docker-centos7-ansible
+    command: ""
+    pre_build_image: true
+    privileged: true
+    memory_reservation: 512m
+    memory: 1024m
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+
+  - name: molecule_yara_debian10
+    image: geerlingguy/docker-debian10-ansible
+    command: ""
+    pre_build_image: true
+    privileged: true
+    memory_reservation: 512m
+    memory: 1024m
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+
+  - name: molecule_yara_debian9
+    image: geerlingguy/docker-debian9-ansible
+    command: ""
+    pre_build_image: true
+    privileged: true
+    memory_reservation: 512m
+    memory: 1024m
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+
+provisioner:
+  name: ansible
+  ansible_args:
+    - -vv
+verifier:
+  name: ansible

@@ -1,0 +1,12 @@
+---
+yara_compile_packages:
+  - automake
+  - libtool
+  - make
+  - gcc
+  - pkgconfig
+  - openssl-devel
+
+yara_compile_packages_extra:
+  - flex
+  - bison

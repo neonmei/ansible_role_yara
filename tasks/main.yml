@@ -1,0 +1,8 @@
+---
+
+- name: include platform-specific variables
+  include_vars: '{{ ansible_os_family }}.yml'
+
+- name: Install Yara from source code
+  include_tasks: source.yml
+  when: yara_install_method == 'source'

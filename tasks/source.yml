@@ -1,0 +1,74 @@
+---
+
+- name: Install compile-time dependencies
+  package:
+    name: '{{ yara_compile_packages }}'
+    state: present
+  when: yara_build_deps_install | bool
+
+- name: Create source directory
+  file:
+    path: '{{ yara_src_dest_path }}'
+    state: directory
+    mode: '{{ yara_src_dest_mode }}'
+    owner: '{{ yara_src_owner }}'
+    group: '{{ yara_src_group }}'
+  when: yara_src_dest_create | bool
+
+- name: Download source tarball
+  get_url:
+    dest: '{{ yara_src_dest_path }}/{{ yara_src_url | basename }}'
+    url: '{{ yara_src_url }}'
+    checksum: '{{ yara_src_checksum }}'
+    mode: '{{ yara_src_dest_mode }}'
+    owner: '{{ yara_src_owner }}'
+    group: '{{ yara_src_group }}'
+  environment: '{{ yara_src_proxy }}'
+
+- name: Extract source tarball
+  unarchive:
+      src: '{{ yara_src_dest_path }}/{{ yara_src_url | basename }}'
+      dest: '{{ yara_src_dest_path }}'
+      owner: '{{ yara_src_owner }}'
+      group: '{{ yara_src_group }}'
+      remote_src: yes
+
+- name: Run bootstraping script
+  shell:
+    cmd: ./bootstrap.sh
+    chdir: '{{ yara_src_dest_path }}/yara-{{ yara_version }}'
+    creates: configure
+
+- name: Run configure
+  shell:
+    cmd: './configure --prefix={{ yara_build_prefix }}'
+    chdir: '{{ yara_src_dest_path }}/yara-{{ yara_version }}'
+    creates: Makefile
+
+- name: Build yara
+  shell:
+    cmd: 'make all'
+    chdir: '{{ yara_src_dest_path }}/yara-{{ yara_version }}'
+    creates: yara
+  environment:
+    MAKEOPTS: '{{ yara_build_makeopts }}'
+
+- name: Install yara
+  shell:
+    cmd: make install
+    chdir: '{{ yara_src_dest_path }}/yara-{{ yara_version }}'
+    creates: '{{ yara_build_prefix }}/bin/yara'
+  environment:
+    MAKEOPTS: '{{ yara_build_makeopts }}'
+
+- name: Post-build removal of source tree
+  file:
+    path: '{{ yara_src_dest_path }}'
+    state: absent
+  when: yara_src_dest_postrm | bool
+
+- name: Remove compile-time dependencies
+  package:
+    name: '{{ yara_compile_packages }}'
+    state: absent
+  when: yara_build_deps_postrm | bool
