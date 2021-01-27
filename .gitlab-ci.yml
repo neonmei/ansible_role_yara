@@ -1,0 +1,20 @@
+---
+
+services:
+  - name: docker:20.10.2-dind
+    alias: docker
+
+variables:
+  DOCKER_HOST: tcp://docker:2375/
+
+before_script:
+  - python3 --version
+  - ansible --version
+  - molecule --version
+  - docker info
+
+molecule-scenario-default:
+  stage: test
+  image: neonmei/ansible-toolset:2.10.5-3.2.2
+  script:
+    - molecule test
