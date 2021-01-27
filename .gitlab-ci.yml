@@ -5,7 +5,9 @@ services:
     alias: docker
 
 variables:
+  ANSIBLE_FORCE_COLOR: '1'
   DOCKER_HOST: tcp://docker:2375/
+  PY_COLORS: '1'
 
 before_script:
   - python3 --version
