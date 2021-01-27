@@ -1,7 +1,7 @@
 ---
 # defaults file for ansible_role_yara
 
-yara_version: '4.0.3'
+yara_version: '4.0.4'
 
 yara_install_method: source
 
@@ -17,7 +17,7 @@ yara_src_owner: null
 yara_src_group: null
 
 yara_src_url: 'https://github.com/VirusTotal/yara/archive/v{{ yara_version }}.tar.gz'
-yara_src_checksum: sha256:d95b7f5e2981328a10ea206e3384d661bd4d488e43e8d1785152bdea44d89880
+yara_src_checksum: sha256:67fdc6f1050261914cf4a9e379b60961f62c2f76af676bafb2ceb47dd642d44f
 
 yara_src_proxy: {}
 # http_proxy:
