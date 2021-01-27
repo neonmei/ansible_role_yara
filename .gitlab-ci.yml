@@ -1,13 +1,14 @@
 ---
 
+variables:
+  ANSIBLE_FORCE_COLOR: '1'
+  PY_COLORS: '1'
+
+# Not supported on per-job basis
+# See issue: https://gitlab.com/gitlab-org/gitlab/-/issues/19561
 services:
   - name: docker:20.10.2-dind
     alias: docker
-
-variables:
-  ANSIBLE_FORCE_COLOR: '1'
-  DOCKER_HOST: tcp://docker:2375/
-  PY_COLORS: '1'
 
 before_script:
   - python3 --version
@@ -15,8 +16,16 @@ before_script:
   - molecule --version
   - docker info
 
+# Job name can't be  dynamically customized just yet
+# See issue: https://gitlab.com/gitlab-org/gitlab/-/issues/27621
 molecule-scenario-default:
   stage: test
-  image: neonmei/ansible-toolset:2.10.5-3.2.2
+  parallel:
+    matrix:
+      - TOOLSET_VERSION: 2.9.17-3.2.2
+      - TOOLSET_VERSION: 2.10.5-3.2.2
+  image: neonmei/ansible-toolset:$TOOLSET_VERSION
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
   script:
     - molecule test

@@ -2,9 +2,16 @@ name: Molecule tests
 on: [pull_request, workflow_dispatch, release, push]
 
 jobs:
-  molecule-default:
+  molecule-scenario-default:
     runs-on: ubuntu-latest
-    container: neonmei/ansible-toolset:2.10.5-3.2.2
+    container: neonmei/ansible-toolset:${{ matrix.toolset_version }}
+    strategy:
+      matrix:
+        # This corresponds to ansible_version-molecule_version
+        toolset_version:
+          - 2.9.17-3.2.2
+          - 2.10.5-3.2.2
+    name: Ansible-Molecule version ${{ matrix.toolset_version }}
 
     steps:
         - name: Checkout Project
